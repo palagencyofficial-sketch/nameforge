@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NameForge — AI Startup Name Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a08;
+    --surface: #111110;
+    --border: #222220;
+    --accent: #e8ff47;
+    --accent2: #ff6b35;
+    --text: #f0efe8;
+    --muted: #666660;
+    --card: #161614;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* GRID BACKGROUND */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(232,255,71,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232,255,71,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  /* NAV */
+  nav {
+    padding: 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+    color: var(--accent);
+  }
+
+  .logo span { color: var(--text); }
+
+  .nav-badge {
+    background: var(--accent);
+    color: var(--bg);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* HERO */
+  .hero {
+    padding: 80px 0 60px;
+    text-align: center;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    padding: 6px 14px;
+    border-radius: 4px;
+    margin-bottom: 32px;
+    letter-spacing: 1px;
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 10vw, 110px);
+    line-height: 0.9;
+    letter-spacing: 1px;
+    margin-bottom: 24px;
+  }
+
+  .hero h1 .highlight {
+    color: var(--accent);
+    display: block;
+  }
+
+  .hero p {
+    color: var(--muted);
+    font-size: 18px;
+    font-weight: 300;
+    max-width: 480px;
+    margin: 0 auto 48px;
+    line-height: 1.6;
+  }
+
+  /* TOOL CARD */
+  .tool-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tool-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+
+  .input-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .input-group { flex: 1; }
+
+  label {
+    display: block;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  input, select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    padding: 14px 16px;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input:focus, select:focus { border-color: var(--accent); }
+  input::placeholder { color: var(--muted); }
+
+  select option { background: var(--surface); }
+
+  .generate-btn {
+    width: 100%;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 2px;
+    padding: 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .generate-btn:hover { background: #f5ff6e; transform: translateY(-1px); }
+  .generate-btn:active { transform: translateY(0); }
+
+  .generate-btn.loading { opacity: 0.7; cursor: not-allowed; }
+
+  /* RESULTS */
+  .results-section { display: none; margin-top: 32px; }
+  .results-section.visible { display: block; animation: fadeUp 0.4s ease; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .results-label {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .results-count {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: var(--accent);
+  }
+
+  .name-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 600px) { .name-grid { grid-template-columns: 1fr; } .input-row { flex-direction: column; } }
+
+  .name-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .name-card:hover { border-color: var(--accent); background: #1a1a18; }
+  .name-card.locked { filter: blur(4px); pointer-events: none; user-select: none; }
+
+  .name-main {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 1px;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .name-domain {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .name-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .copy-btn {
+    position: absolute;
+    top: 12px; right: 12px;
+    background: var(--border);
+    border: none;
+    color: var(--muted);
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .copy-btn:hover { background: var(--accent); color: var(--bg); }
+
+  /* LOCK OVERLAY */
+  .lock-overlay {
+    display: none;
+    background: linear-gradient(to bottom, transparent, var(--card) 60%);
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 200px;
+    border-radius: 0 0 16px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: 32px;
+    z-index: 10;
+  }
+
+  .lock-overlay.show { display: flex; }
+
+  .unlock-cta {
+    text-align: center;
+  }
+
+  .unlock-cta p {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+
+  .unlock-btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: var(--bg);
+    border: none;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 2px;
+    padding: 14px 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .unlock-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,255,71,0.3); }
+
+  /* PRICING */
+  .pricing-section {
+    padding: 80px 0;
+    text-align: center;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+
+  .section-sub {
+    color: var(--muted);
+    font-size: 16px;
+    margin-bottom: 48px;
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+
+  @media (max-width: 700px) { .pricing-grid { grid-template-columns: 1fr; } }
+
+  .pricing-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 32px 24px;
+    text-align: left;
+    position: relative;
+    transition: transform 0.2s;
+  }
+
+  .pricing-card:hover { transform: translateY(-4px); }
+
+  .pricing-card.featured {
+    border-color: var(--accent);
+    background: #141412;
+  }
+
+  .pricing-card.featured::before {
+    content: 'MOST POPULAR';
+    position: absolute;
+    top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--accent);
+    color: var(--bg);
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+
+  .plan-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .plan-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .plan-price span {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--muted);
+  }
+
+  .plan-period {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  .plan-features {
+    list-style: none;
+    margin-bottom: 28px;
+  }
+
+  .plan-features li {
+    font-size: 14px;
+    color: var(--muted);
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .plan-features li::before { content: '→'; color: var(--accent); font-size: 12px; }
+  .plan-features li.pro::before { color: var(--accent2); }
+
+  .plan-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  .pricing-card.featured .plan-btn {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+  }
+
+  .plan-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .pricing-card.featured .plan-btn:hover { background: #f5ff6e; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.show { display: flex; }
+
+  .modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 48px 40px;
+    max-width: 440px;
+    width: 90%;
+    text-align: center;
+    position: relative;
+    animation: modalIn 0.3s ease;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 16px; right: 20px;
+    background: none; border: none;
+    color: var(--muted);
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  .modal h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .modal p {
+    color: var(--muted);
+    font-size: 15px;
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  .modal-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    padding: 14px 16px;
+    border-radius: 8px;
+    outline: none;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+  }
+
+  .modal-input:focus { border-color: var(--accent); }
+
+  .modal-submit {
+    width: 100%;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 2px;
+    padding: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 16px;
+  }
+
+  .modal-submit:hover { background: #f5ff6e; }
+
+  .modal-fine {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* STATS BAR */
+  .stats-bar {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 0;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 0 80px;
+  }
+
+  .stat { text-align: center; flex: 1; }
+
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--accent);
+    color: var(--bg);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+    z-index: 200;
+    white-space: nowrap;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* USAGE COUNTER */
+  .usage-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .usage-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    flex: 1;
+  }
+
+  .usage-text strong { color: var(--accent); }
+
+  .usage-track {
+    width: 80px; height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .usage-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <nav>
+    <div class="logo">Name<span>Forge</span></div>
+    <div class="nav-badge">Free Beta</div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag">// AI-POWERED STARTUP NAME GENERATOR</div>
+    <h1>
+      NAME YOUR
+      <span class="highlight">NEXT UNICORN</span>
+    </h1>
+    <p>Generate brandable, available startup names in seconds. Used by 12,000+ founders.</p>
+  </div>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-num">12K+</div><div class="stat-label">Founders</div></div>
+    <div class="stat"><div class="stat-num">340K</div><div class="stat-label">Names Generated</div></div>
+    <div class="stat"><div class="stat-num">94%</div><div class="stat-label">Satisfaction</div></div>
+    <div class="stat"><div class="stat-num">2.1s</div><div class="stat-label">Avg. Gen Time</div></div>
+  </div>
+
+  <!-- TOOL -->
+  <div class="tool-card" id="toolCard">
+    
+    <div class="usage-bar" id="usageBar">
+      <div class="usage-text">Free generations: <strong id="usageLeft">3</strong>/3 remaining</div>
+      <div class="usage-track"><div class="usage-fill" id="usageFill" style="width:100%"></div></div>
+    </div>
+
+    <div class="input-row">
+      <div class="input-group">
+        <label>What does your startup do?</label>
+        <input type="text" id="descInput" placeholder="e.g. AI hiring platform for remote teams" />
+      </div>
+      <div class="input-group" style="max-width:180px;">
+        <label>Industry</label>
+        <select id="industrySelect">
+          <option value="tech">Tech / SaaS</option>
+          <option value="fintech">Fintech</option>
+          <option value="health">Healthtech</option>
+          <option value="ai">AI / ML</option>
+          <option value="ecom">E-Commerce</option>
+          <option value="edtech">Edtech</option>
+          <option value="climate">Climate</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="generate-btn" id="generateBtn" onclick="generate()">
+      ⚡ GENERATE NAMES
+    </button>
+
+    <!-- RESULTS -->
+    <div class="results-section" id="resultsSection">
+      <div class="results-header">
+        <div class="results-label">// Generated Names</div>
+        <div class="results-count" id="resultsCount">6 results</div>
+      </div>
+      <div class="name-grid" id="nameGrid"></div>
+      <div class="lock-overlay" id="lockOverlay">
+        <div class="unlock-cta">
+          <p>🔒 2 premium names locked — upgrade to unlock</p>
+          <button class="unlock-btn" onclick="showModal('pro')">UNLOCK ALL NAMES →</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PRICING -->
+  <div class="pricing-section" id="pricing">
+    <div class="section-title">SIMPLE PRICING</div>
+    <div class="section-sub">Scale as you grow. Cancel anytime.</div>
+    <div class="pricing-grid">
+      
+      <div class="pricing-card">
+        <div class="plan-name">// FREE</div>
+        <div class="plan-price">$0</div>
+        <div class="plan-period">forever</div>
+        <ul class="plan-features">
+          <li>3 generations/day</li>
+          <li>4 names per batch</li>
+          <li>Basic industries</li>
+          <li>Copy to clipboard</li>
+        </ul>
+        <button class="plan-btn" onclick="document.getElementById('descInput').focus()">Start Free</button>
+      </div>
+
+      <div class="pricing-card featured">
+        <div class="plan-name">// PRO</div>
+        <div class="plan-price">$9<span>/mo</span></div>
+        <div class="plan-period">billed monthly</div>
+        <ul class="plan-features">
+          <li class="pro">Unlimited generations</li>
+          <li class="pro">12 names per batch</li>
+          <li class="pro">Domain availability check</li>
+          <li class="pro">Trademark pre-screen</li>
+          <li class="pro">Export to CSV</li>
+        </ul>
+        <button class="plan-btn" onclick="showModal('pro')">Get Pro →</button>
+      </div>
+
+      <div class="pricing-card">
+        <div class="plan-name">// TEAM</div>
+        <div class="plan-price">$29<span>/mo</span></div>
+        <div class="plan-period">up to 5 seats</div>
+        <ul class="plan-features">
+          <li>Everything in Pro</li>
+          <li>Shared name library</li>
+          <li>Team voting & ratings</li>
+          <li>Brand identity kit</li>
+          <li>Priority support</li>
+        </ul>
+        <button class="plan-btn" onclick="showModal('team')">Get Team →</button>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <h2>UNLOCK <span id="modalPlan">PRO</span></h2>
+    <p>Join 4,200+ founders using NameForge Pro. 7-day free trial, cancel anytime.</p>
+    <input type="email" class="modal-input" placeholder="your@email.com" id="emailInput" />
+    <button class="modal-submit" onclick="submitModal()">START FREE TRIAL →</button>
+    <div class="modal-fine">No credit card required to start. $9/mo after trial.</div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  let usageCount = 3;
+  let isPro = false;
+
+  const nameData = {
+    tech: [
+      { name: "Stackr", domain: "stackr.io", desc: "Clean, memorable, signals infrastructure" },
+      { name: "Nexloop", domain: "nexloop.com", desc: "Implies iterative, continuous process" },
+      { name: "Vaultix", domain: "vaultix.io", desc: "Trust + tech blend, enterprise feel" },
+      { name: "Flowbit", domain: "flowbit.dev", desc: "Workflow automation connotation" },
+      { name: "Crestify", domain: "crestify.com", desc: "Growth-forward, SaaS-native sound" },
+      { name: "Gridline", domain: "gridline.io", desc: "Infrastructure, clarity, precision" },
+    ],
+    fintech: [
+      { name: "Vaulta", domain: "vaulta.io", desc: "Security + banking, clean identity" },
+      { name: "Ledgrr", domain: "ledgrr.com", desc: "Modern spelling of a finance staple" },
+      { name: "Clearfund", domain: "clearfund.co", desc: "Transparency in finance" },
+      { name: "Nubonk", domain: "nubonk.io", desc: "Neo-banking, youthful energy" },
+      { name: "Payrail", domain: "payrail.com", desc: "Payments infrastructure, B2B" },
+      { name: "Mintflow", domain: "mintflow.io", desc: "Money movement, fluid" },
+    ],
+    health: [
+      { name: "Healix", domain: "healix.io", desc: "Health + matrix, clinical feel" },
+      { name: "Vitaloop", domain: "vitaloop.com", desc: "Vital signs + continuous loop" },
+      { name: "Medra", domain: "medra.io", desc: "Short, punchy, medical authority" },
+      { name: "Carepath", domain: "carepath.co", desc: "Warm, patient-journey focused" },
+      { name: "Synapse Health", domain: "synphealth.io", desc: "AI + medical intelligence" },
+      { name: "Wellform", domain: "wellform.io", desc: "Wellness + transformation" },
+    ],
+    ai: [
+      { name: "Cognio", domain: "cognio.ai", desc: "Cognition + AI, premium feel" },
+      { name: "Synthetica", domain: "synthetica.ai", desc: "AI-native, futuristic brand" },
+      { name: "Inferix", domain: "inferix.io", desc: "Inference engine connotation" },
+      { name: "Lumina AI", domain: "lumina.ai", desc: "Clarity, intelligence, light" },
+      { name: "Cortexly", domain: "cortexly.com", desc: "Brain + adverb, smart positioning" },
+      { name: "Morphix", domain: "morphix.ai", desc: "Adaptive, shape-shifting AI" },
+    ],
+    ecom: [
+      { name: "Cartly", domain: "cartly.io", desc: "E-com native, friendly, scalable" },
+      { name: "Shelflr", domain: "shelflr.com", desc: "Retail + tech, Flickr-era cool" },
+      { name: "Tradelane", domain: "tradelane.co", desc: "B2B commerce, logistics feel" },
+      { name: "Orderix", domain: "orderix.io", desc: "Operations, order management" },
+      { name: "Stockwave", domain: "stockwave.io", desc: "Inventory management energy" },
+      { name: "Merhant", domain: "merhant.com", desc: "Merchant variant, memorable" },
+    ],
+    edtech: [
+      { name: "Learnloop", domain: "learnloop.io", desc: "Continuous learning cycle" },
+      { name: "Skillvault", domain: "skillvault.co", desc: "Store and grow skills" },
+      { name: "Cursy", domain: "cursy.io", desc: "Courses + friendly, Duolingo energy" },
+      { name: "Gradify", domain: "gradify.com", desc: "Progress + achievement blend" },
+      { name: "Knowledgr", domain: "knowledgr.io", desc: "Tumblr-era, knowledge-first" },
+      { name: "Mentara", domain: "mentara.io", desc: "Mentorship + learning platform" },
+    ],
+    climate: [
+      { name: "Terraly", domain: "terraly.io", desc: "Earth + tech suffix, clean" },
+      { name: "Carbonpath", domain: "carbonpath.co", desc: "Carbon journey, measurable" },
+      { name: "Greenlane", domain: "greenlane.io", desc: "Clean energy corridor feel" },
+      { name: "Ecoframe", domain: "ecoframe.io", desc: "Sustainability infrastructure" },
+      { name: "Verdure", domain: "verdure.co", desc: "Lush, botanical, premium green" },
+      { name: "Fluxcarbon", domain: "fluxcarbon.io", desc: "Carbon trading, dynamic" },
+    ]
+  };
+
+  function generate() {
+    const desc = document.getElementById('descInput').value.trim();
+    const industry = document.getElementById('industrySelect').value;
+    
+    if (!desc) {
+      document.getElementById('descInput').style.borderColor = '#ff4444';
+      setTimeout(() => document.getElementById('descInput').style.borderColor = '', 1000);
+      return;
+    }
+
+    if (usageCount <= 0 && !isPro) {
+      showModal('pro');
+      return;
+    }
+
+    const btn = document.getElementById('generateBtn');
+    btn.textContent = '⚡ GENERATING...';
+    btn.classList.add('loading');
+
+    setTimeout(() => {
+      btn.textContent = '⚡ GENERATE NAMES';
+      btn.classList.remove('loading');
+      showResults(industry);
+      
+      if (!isPro) {
+        usageCount--;
+        updateUsageBar();
+      }
+    }, 1400);
+  }
+
+  function showResults(industry) {
+    const names = nameData[industry] || nameData.tech;
+    const grid = document.getElementById('nameGrid');
+    grid.innerHTML = '';
+    
+    const showCount = isPro ? 6 : 4;
+    
+    names.forEach((n, i) => {
+      const locked = !isPro && i >= showCount;
+      const card = document.createElement('div');
+      card.className = 'name-card' + (locked ? ' locked' : '');
+      card.innerHTML = `
+        <button class="copy-btn" onclick="copyName('${n.name}')">COPY</button>
+        <div class="name-main">${n.name}</div>
+        <div class="name-domain">→ ${n.domain}</div>
+        <div class="name-desc">${n.desc}</div>
+      `;
+      grid.appendChild(card);
+    });
+
+    const overlay = document.getElementById('lockOverlay');
+    if (!isPro) {
+      overlay.className = 'lock-overlay show';
+    } else {
+      overlay.className = 'lock-overlay';
+    }
+
+    document.getElementById('resultsCount').textContent = `${isPro ? 6 : 4} results`;
+    document.getElementById('resultsSection').className = 'results-section visible';
+  }
+
+  function updateUsageBar() {
+    const left = Math.max(0, usageCount);
+    document.getElementById('usageLeft').textContent = left;
+    document.getElementById('usageFill').style.width = (left / 3 * 100) + '%';
+    
+    if (left === 0) {
+      document.getElementById('usageFill').style.background = '#ff4444';
+    }
+  }
+
+  function copyName(name) {
+    navigator.clipboard.writeText(name).catch(() => {});
+    showToast(`"${name}" copied to clipboard!`);
+  }
+
+  function showModal(plan) {
+    document.getElementById('modalPlan', ).textContent = plan.toUpperCase();
+    document.getElementById('modal').className = 'modal-overlay show';
+  }
+
+  function closeModal() {
+    document.getElementById('modal').className = 'modal-overlay';
+  }
+
+  function submitModal() {
+    const email = document.getElementById('emailInput').value;
+    if (!email || !email.includes('@')) {
+      document.getElementById('emailInput').style.borderColor = '#ff4444';
+      setTimeout(() => document.getElementById('emailInput').style.borderColor = '', 1000);
+      return;
+    }
+    closeModal();
+    isPro = true;
+    usageCount = 999;
+    document.getElementById('usageBar').style.display = 'none';
+    showToast('🎉 Pro activated! Unlimited generations unlocked.');
+    
+    // Re-render results if visible
+    const resultsVisible = document.getElementById('resultsSection').classList.contains('visible');
+    if (resultsVisible) {
+      showResults(document.getElementById('industrySelect').value);
+    }
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show';
+    setTimeout(() => t.className = 'toast', 3000);
+  }
+
+  // Enter key
+  document.getElementById('descInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') generate();
+  });
+</script>
+</body>
+</html>
+
