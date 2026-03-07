@@ -4,268 +4,262 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NameForge — AI Startup Name Generator</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inconsolata:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
-  :root {
-    --bg: #06080f;
-    --surface: #0d1120;
-    --border: #1a2035;
-    --accent: #4fffb0;
-    --accent2: #ff4f8b;
-    --accent3: #4f8bff;
-    --text: #e8ecf5;
-    --muted: #556080;
-    --card: #0f1525;
-  }
+:root{--bg:#080808;--bg2:#0f0f0f;--bg3:#161616;--border:#1f1f1f;--border2:#2a2a2a;--text:#ededed;--text2:#a0a0a0;--text3:#585858;--blue:#3b82f6;--green:#22c55e;--red:#ef4444;--orange:#f97316;--r:10px;--rl:16px;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:72px 72px;pointer-events:none;z-index:0;}
+.wrap{max-width:1000px;margin:0 auto;padding:0 20px;position:relative;z-index:1;}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0;border-bottom:1px solid var(--border);}
+.logo{font-size:17px;font-weight:700;letter-spacing:-.4px;display:flex;align-items:center;gap:8px;}
+.logo-icon{width:28px;height:28px;border-radius:7px;background:var(--blue);display:grid;place-items:center;font-size:14px;}
+.nav-links{display:flex;align-items:center;gap:4px;}
+.nav-link{font-size:13px;font-weight:500;color:var(--text2);text-decoration:none;padding:6px 12px;border-radius:7px;transition:all .15s;}
+.nav-link:hover{background:var(--bg3);color:var(--text);}
+.nav-cta{font-size:13px;font-weight:600;color:#fff;background:var(--blue);border:none;border-radius:7px;padding:7px 16px;cursor:pointer;transition:all .15s;}
+.nav-cta:hover{background:#2563eb;}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+/* HERO */
+.hero{padding:88px 0 72px;text-align:center;}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border2);background:var(--bg3);padding:5px 12px;border-radius:20px;margin-bottom:28px;}
+.hero-badge-dot{width:5px;height:5px;background:var(--green);border-radius:50%;}
+.hero-badge span{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text2);letter-spacing:.5px;}
+.hero h1{font-size:clamp(38px,6.5vw,72px);font-weight:800;letter-spacing:-2.5px;line-height:1.04;margin-bottom:18px;}
+.hero h1 em{font-style:normal;background:linear-gradient(135deg,#fff 30%,var(--blue) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero p{font-size:16px;color:var(--text2);max-width:420px;margin:0 auto 48px;line-height:1.65;}
 
-  body::after {
-    content: '';
-    position: fixed; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none; z-index: 999; opacity: 0.35;
-  }
+/* STATS */
+.stats{display:flex;border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:56px;background:var(--bg2);}
+.stat{flex:1;padding:20px;text-align:center;border-right:1px solid var(--border);}
+.stat:last-child{border-right:none;}
+.stat-n{font-size:24px;font-weight:800;letter-spacing:-1px;}
+.stat-l{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-top:3px;}
 
-  .orb { position: fixed; border-radius: 50%; filter: blur(90px); pointer-events: none; z-index: 0; }
-  .o1 { width: 500px; height: 500px; background: rgba(79,255,176,0.06); top: -150px; right: -120px; }
-  .o2 { width: 400px; height: 400px; background: rgba(255,79,139,0.05); bottom: 150px; left: -120px; }
-  .o3 { width: 280px; height: 280px; background: rgba(79,139,255,0.06); top: 55%; right: 8%; }
+/* TOOL */
+.tool-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:80px;}
+.tool-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.tool-dots{display:flex;gap:6px;}
+.dot{width:10px;height:10px;border-radius:50%;}
+.dot-r{background:#ff5f56;}.dot-y{background:#ffbd2e;}.dot-g{background:#28c840;}
+.usage-pill{display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);}
+.usage-bar-wrap{width:48px;height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.usage-bar-fill{height:100%;background:var(--blue);border-radius:2px;transition:width .4s ease;}
+.usage-num{color:var(--blue);font-weight:500;}
+.tool-body{padding:24px;}
+.field-row{display:flex;gap:10px;}
+@media(max-width:560px){.field-row{flex-direction:column;}}
+.field-label{display:block;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:7px;}
+input[type=text],select{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;padding:11px 14px;border-radius:var(--r);outline:none;transition:border-color .15s;-webkit-appearance:none;}
+input[type=text]:focus,select:focus{border-color:var(--blue);}
+input::placeholder{color:var(--text3);}
+select option{background:var(--bg3);}
+.field-sm{max-width:150px;}
+@media(max-width:560px){.field-sm{max-width:100%;}}
+.gen-btn{width:100%;padding:13px;margin-top:16px;background:var(--blue);color:#fff;border:none;border-radius:var(--r);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:7px;}
+.gen-btn:hover{background:#2563eb;transform:translateY(-1px);}
+.gen-btn.loading{opacity:.6;pointer-events:none;}
+.success-banner{display:none;margin:0 24px 16px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);border-radius:var(--r);padding:10px 14px;font-size:13px;color:var(--green);align-items:center;gap:7px;}
+.success-banner.show{display:flex;}
+.results{display:none;padding:0 24px 24px;}
+.results.show{display:block;animation:fadeUp .3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.results-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-top:4px;}
+.results-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:1px;}
+.results-count{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--blue);}
+.name-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+@media(max-width:500px){.name-grid{grid-template-columns:1fr;}}
+.name-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:16px;position:relative;transition:border-color .15s;}
+.name-card:hover{border-color:var(--border2);}
+.name-card.locked{filter:blur(4px);pointer-events:none;user-select:none;}
+.nc-name{font-size:18px;font-weight:700;letter-spacing:-.5px;margin-bottom:3px;}
+.nc-domain{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--blue);margin-bottom:7px;}
+.nc-desc{font-size:12px;color:var(--text2);line-height:1.5;}
+.nc-copy{position:absolute;top:10px;right:10px;background:var(--border);border:none;color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 8px;border-radius:5px;cursor:pointer;transition:all .15s;letter-spacing:.5px;}
+.nc-copy:hover{background:var(--blue);color:#fff;}
+.lock-gate{display:none;position:relative;background:linear-gradient(to bottom,transparent,var(--bg2) 55%);height:160px;margin-top:-160px;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:20px;z-index:3;}
+.lock-gate.show{display:flex;}
+.lock-gate p{font-size:13px;color:var(--text2);margin-bottom:12px;}
+.lock-btn{background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;padding:9px 22px;border-radius:var(--r);cursor:pointer;transition:all .15s;}
+.lock-btn:hover{border-color:var(--blue);color:var(--blue);}
 
-  .container { max-width: 960px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 1; }
+/* PRICING */
+.section{padding:80px 0;}
+.sec-eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--blue);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
+.sec-title{font-size:clamp(28px,5vw,44px);font-weight:800;letter-spacing:-1.5px;margin-bottom:6px;}
+.sec-sub{font-size:15px;color:var(--text2);}
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:44px;}
+@media(max-width:680px){.price-grid{grid-template-columns:1fr;}}
+.price-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:24px;position:relative;transition:border-color .2s;}
+.price-card:hover{border-color:var(--border2);}
+.price-card.featured{border-color:var(--blue);background:#0d1a2d;}
+.badge{position:absolute;top:-11px;left:20px;background:var(--blue);color:#fff;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;border-radius:20px;}
+.plan-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;}
+.plan-price{font-size:40px;font-weight:800;letter-spacing:-2px;line-height:1;}
+.plan-price .unit{font-size:14px;font-weight:400;color:var(--text3);}
+.plan-cycle{font-size:12px;color:var(--text3);margin-bottom:22px;margin-top:3px;}
+.plan-feats{list-style:none;margin-bottom:22px;}
+.plan-feats li{font-size:13px;color:var(--text2);padding:7px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.plan-feats li:last-child{border-bottom:none;}
+.tick{color:var(--green);font-size:11px;flex-shrink:0;}
+.tick-blue{color:var(--blue);font-size:11px;flex-shrink:0;}
+.plan-btn{width:100%;padding:11px;border-radius:var(--r);font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:13px;cursor:pointer;border:1px solid var(--border2);background:var(--bg3);color:var(--text);transition:all .15s;}
+.plan-btn:hover{border-color:var(--blue);color:var(--blue);}
+.price-card.featured .plan-btn{background:var(--blue);color:#fff;border-color:var(--blue);}
+.price-card.featured .plan-btn:hover{background:#2563eb;}
+.upi-badge{display:inline-flex;align-items:center;gap:4px;margin-top:10px;border:1px solid var(--border);background:var(--bg3);padding:4px 10px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);}
 
-  /* NAV */
-  nav { padding: 22px 0; display: flex; justify-content: space-between; align-items: center; }
-  .logo { font-size: 22px; font-weight: 800; }
-  .logo .la { color: var(--accent); }
-  .logo .lb { color: var(--text); }
-  .nav-r { display: flex; align-items: center; gap: 14px; }
-  .nav-pill { font-family: 'Inconsolata', monospace; font-size: 10px; letter-spacing: 2px; color: var(--accent); border: 1px solid rgba(79,255,176,0.25); padding: 5px 12px; border-radius: 20px; text-transform: uppercase; background: rgba(79,255,176,0.04); }
-  .nav-link { font-family: 'Inconsolata', monospace; font-size: 12px; color: var(--muted); text-decoration: none; letter-spacing: 1px; text-transform: uppercase; transition: color 0.2s; }
-  .nav-link:hover { color: var(--accent); }
+/* CONTACT */
+.contact-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:48px 36px;text-align:center;margin-bottom:80px;}
+@media(max-width:580px){.contact-box{padding:32px 18px;}}
+.contact-grid{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:32px;}
+.contact-card{flex:1;min-width:200px;max-width:260px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rl);padding:24px 20px 30px;text-decoration:none;color:inherit;display:block;transition:all .2s;position:relative;text-align:left;}
+@media(max-width:460px){.contact-card{min-width:100%;max-width:100%;}}
+.contact-card:hover{transform:translateY(-3px);}
+.contact-card.client:hover{border-color:var(--blue);}
+.contact-card.collab:hover{border-color:#a855f7;}
+.cc-icon{font-size:24px;margin-bottom:12px;display:block;}
+.cc-title{font-size:15px;font-weight:700;margin-bottom:6px;}
+.contact-card.client .cc-title{color:var(--blue);}
+.contact-card.collab .cc-title{color:#a855f7;}
+.cc-desc{font-size:12px;color:var(--text2);line-height:1.6;}
+.cc-arrow{position:absolute;bottom:16px;right:16px;font-size:14px;color:var(--text3);transition:all .15s;}
+.contact-card:hover .cc-arrow{color:var(--text2);transform:translateX(2px);}
+footer{border-top:1px solid var(--border);padding:20px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+.footer-logo{font-size:15px;font-weight:700;}
+.footer-copy{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-size:13px;padding:10px 20px;border-radius:10px;z-index:500;white-space:nowrap;transition:transform .3s cubic-bezier(0.16,1,0.3,1);box-shadow:0 4px 20px rgba(0,0,0,.5);}
+.toast.show{transform:translateX(-50%) translateY(0);}
 
-  /* HERO */
-  .hero { padding: 68px 0 48px; text-align: center; }
-  .eyebrow { font-family: 'Inconsolata', monospace; font-size: 11px; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; margin-bottom: 26px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-  .eyebrow::before, .eyebrow::after { content: ''; width: 36px; height: 1px; background: var(--border); }
-  .hero h1 { font-size: clamp(50px, 9vw, 100px); font-weight: 800; line-height: 0.92; letter-spacing: -2px; margin-bottom: 26px; }
-  .hw1 { display: block; color: var(--text); }
-  .hw2 { display: block; background: linear-gradient(135deg, var(--accent), var(--accent3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-  .hero-sub { font-family: 'Inconsolata', monospace; font-size: 15px; color: var(--muted); max-width: 430px; margin: 0 auto 50px; line-height: 1.7; font-weight: 300; }
+/* ========== PAYMENT MODAL ========== */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(10px);padding:16px;}
+.modal-bg.show{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:18px;width:100%;max-width:430px;max-height:92vh;overflow-y:auto;position:relative;animation:modalIn .25s cubic-bezier(0.16,1,0.3,1);}
+.modal::-webkit-scrollbar{width:3px;}
+.modal::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+@keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-close{position:absolute;top:14px;right:14px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);width:28px;height:28px;border-radius:7px;font-size:15px;cursor:pointer;display:grid;place-items:center;transition:all .15s;z-index:10;}
+.modal-close:hover{color:var(--text);}
 
-  /* STATS */
-  .stats { display: flex; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--card); margin-bottom: 64px; }
-  .stat { flex: 1; padding: 20px 12px; text-align: center; border-right: 1px solid var(--border); }
-  .stat:last-child { border-right: none; }
-  .sn { font-size: 26px; font-weight: 800; color: var(--accent); letter-spacing: -1px; line-height: 1; margin-bottom: 4px; }
-  .sl { font-family: 'Inconsolata', monospace; font-size: 10px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; }
+/* Steps */
+.modal-steps{display:flex;padding:20px 24px 0;gap:6px;}
+.sdot{flex:1;height:2px;background:var(--border);border-radius:2px;transition:background .3s;}
+.sdot.active{background:var(--blue);}
+.sdot.done{background:var(--green);}
+.step{display:none;padding:20px 24px 24px;}
+.step.show{display:block;}
+.step-title{font-size:18px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px;}
+.step-sub{font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.5;}
 
-  /* TOOL */
-  .tool-wrap { position: relative; margin-bottom: 80px; }
-  .tool-glow { position: absolute; inset: -1px; background: linear-gradient(135deg, rgba(79,255,176,0.2), rgba(79,139,255,0.1), rgba(255,79,139,0.1)); border-radius: 20px; z-index: 0; }
-  .tool-card { position: relative; z-index: 1; background: var(--card); border-radius: 19px; padding: 34px; overflow: hidden; }
-  @media(max-width:580px){ .tool-card { padding: 18px; } }
-  .tool-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), var(--accent3), transparent); }
+/* Plan chips */
+.chips{display:flex;gap:8px;margin-bottom:18px;}
+.chip{flex:1;padding:12px 10px;border:1px solid var(--border);border-radius:var(--r);cursor:pointer;text-align:center;transition:all .15s;background:var(--bg3);}
+.chip.sel{border-color:var(--blue);background:rgba(59,130,246,.08);}
+.chip-name{font-size:13px;font-weight:700;}
+.chip-price{font-size:11px;color:var(--text3);margin-top:2px;font-family:'JetBrains Mono',monospace;}
+.mi{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;padding:11px 14px;border-radius:var(--r);outline:none;margin-bottom:12px;transition:border-color .15s;}
+.mi:focus{border-color:var(--blue);}
+.mi::placeholder{color:var(--text3);}
+.next-btn{width:100%;padding:13px;background:var(--blue);color:#fff;border:none;border-radius:var(--r);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:all .15s;}
+.next-btn:hover{background:#2563eb;}
+.back-link{display:block;width:100%;text-align:center;padding:10px 0 0;font-size:13px;color:var(--text3);cursor:pointer;border:none;background:none;transition:color .15s;}
+.back-link:hover{color:var(--text);}
 
-  .usage-strip { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(79,255,176,0.04); border: 1px solid rgba(79,255,176,0.1); border-radius: 8px; margin-bottom: 20px; }
-  .udot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: blink 2s infinite; flex-shrink: 0; }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
-  .utxt { font-family: 'Inconsolata', monospace; font-size: 12px; color: var(--muted); flex: 1; }
-  .utxt strong { color: var(--accent); }
-  .utrack { width: 60px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; flex-shrink: 0; }
-  .ufill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); border-radius: 2px; transition: width 0.5s ease; }
+/* QR / UPI */
+.qr-wrap{text-align:center;margin-bottom:16px;}
+.qr-frame{display:inline-block;padding:10px;background:#fff;border-radius:10px;margin-bottom:12px;}
+.qr-frame img{width:150px;height:150px;display:block;}
+.upi-apps{display:flex;justify-content:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+.upi-app{display:flex;flex-direction:column;align-items:center;gap:3px;}
+.upi-app span{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);}
+.upi-id-row{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;}
+.upi-id-val{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text);word-break:break-all;}
+.copy-upi{background:var(--border);border:none;color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 10px;border-radius:5px;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0;}
+.copy-upi:hover{background:var(--blue);color:#fff;}
+.amt-note{text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);margin-bottom:16px;}
+.amt-note strong{color:var(--orange);}
 
-  .input-row { display: flex; gap: 12px; margin-bottom: 16px; }
-  @media(max-width:560px){ .input-row { flex-direction: column; } }
-  .ig { flex: 1; }
-  .ig.narrow { max-width: 160px; }
-  @media(max-width:560px){ .ig.narrow { max-width: 100%; } }
-  .fl { display: block; font-family: 'Inconsolata', monospace; font-size: 10px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 7px; }
-  input[type=text], select { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-family: 'Syne', sans-serif; font-size: 14px; padding: 13px 14px; border-radius: 10px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; -webkit-appearance: none; }
-  input[type=text]:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(79,255,176,0.07); }
-  input::placeholder { color: var(--muted); font-size: 13px; }
-  select option { background: var(--surface); }
+/* Upload zone */
+.upload-zone{border:1.5px dashed var(--border2);border-radius:var(--r);padding:20px;text-align:center;cursor:pointer;transition:all .15s;position:relative;overflow:hidden;margin-bottom:12px;}
+.upload-zone:hover{border-color:var(--blue);background:rgba(59,130,246,.04);}
+.upload-zone.has-file{border-color:var(--green);background:rgba(34,197,94,.04);}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-icon{font-size:22px;margin-bottom:5px;}
+.upload-txt{font-size:13px;color:var(--text2);}
+.upload-sub{font-size:10px;color:var(--text3);margin-top:2px;font-family:'JetBrains Mono',monospace;}
+.upload-preview{width:100%;max-height:70px;object-fit:cover;border-radius:6px;margin-top:8px;display:none;}
 
-  .gen-btn { width: 100%; padding: 17px; background: linear-gradient(135deg, var(--accent), #00d4ff); color: #040810; border: none; border-radius: 12px; font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; letter-spacing: 1px; cursor: pointer; transition: all 0.25s; }
-  .gen-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
-  .gen-btn:active { transform: scale(0.99); }
-  .gen-btn.loading { opacity: 0.6; pointer-events: none; }
+/* Verify status */
+.vstat{border-radius:var(--r);padding:11px 13px;margin-bottom:12px;font-size:13px;display:none;align-items:flex-start;gap:8px;line-height:1.5;}
+.vstat.show{display:flex;}
+.vstat.checking{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);color:var(--blue);}
+.vstat.success{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);color:var(--green);}
+.vstat.warn{background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.2);color:var(--orange);}
+.vstat.error{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:var(--red);}
+.spin{animation:spin 1s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-  /* Results */
-  .results-wrap { display: none; margin-top: 28px; }
-  .results-wrap.on { display: block; animation: riseUp 0.4s cubic-bezier(0.16,1,0.3,1); }
-  @keyframes riseUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+.submit-btn{width:100%;padding:13px;background:var(--green);color:#000;border:none;border-radius:var(--r);font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:14px;cursor:pointer;transition:all .15s;}
+.submit-btn:hover{background:#16a34a;}
+.submit-btn:disabled{opacity:.45;cursor:not-allowed;}
+.secure-note{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:12px;font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace;}
 
-  .rh { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-  .rlabel { font-family: 'Inconsolata', monospace; font-size: 11px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
-  .rcount { font-family: 'Inconsolata', monospace; font-size: 11px; color: var(--accent3); }
-
-  .name-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  @media(max-width:500px){ .name-grid { grid-template-columns: 1fr; } }
-
-  .nc { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; }
-  .nc::before { content:''; position:absolute; top:0;left:0;right:0;height:1px; background:linear-gradient(90deg,transparent,var(--accent3),transparent); opacity:0; transition:opacity 0.2s; }
-  .nc:hover { border-color: rgba(79,139,255,0.4); background: #111828; }
-  .nc:hover::before { opacity: 1; }
-  .nc.locked { filter: blur(5px); pointer-events: none; user-select: none; }
-
-  .nm { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; color: var(--text); margin-bottom: 4px; }
-  .nd { font-family: 'Inconsolata', monospace; font-size: 11px; color: var(--accent); margin-bottom: 8px; }
-  .nv { font-family: 'Inconsolata', monospace; font-size: 12px; color: var(--muted); line-height: 1.5; font-weight: 300; }
-
-  .copy-btn { position: absolute; top: 10px; right: 10px; background: var(--border); border: none; color: var(--muted); font-family: 'Inconsolata', monospace; font-size: 10px; padding: 3px 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s; letter-spacing: 1px; }
-  .copy-btn:hover { background: var(--accent); color: #040810; }
-
-  .lock-wall { display: none; position: absolute; bottom: 0; left: 0; right: 0; height: 175px; background: linear-gradient(to bottom, transparent, var(--card) 65%); border-radius: 0 0 19px 19px; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 26px; z-index: 5; }
-  .lock-wall.on { display: flex; }
-  .lock-msg { font-family: 'Inconsolata', monospace; font-size: 13px; color: var(--muted); margin-bottom: 12px; }
-  .unlock-btn { background: linear-gradient(135deg, var(--accent2), var(--accent)); color: #040810; border: none; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; letter-spacing: 1px; padding: 12px 30px; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
-  .unlock-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(79,255,176,0.22); }
-
-  /* PRICING */
-  .section { padding: 80px 0; }
-  .sec-head { text-align: center; margin-bottom: 46px; }
-  .sec-tag { font-family: 'Inconsolata', monospace; font-size: 11px; letter-spacing: 3px; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; }
-  .sec-title { font-size: clamp(34px, 6vw, 52px); font-weight: 800; letter-spacing: -1.5px; }
-
-  .pgrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
-  @media(max-width:700px){ .pgrid { grid-template-columns: 1fr; } }
-
-  .pc { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px 22px; position: relative; transition: transform 0.25s, border-color 0.25s; }
-  .pc:hover { transform: translateY(-5px); border-color: rgba(79,139,255,0.3); }
-  .pc.star { border-color: rgba(79,255,176,0.4); background: #0d1a24; }
-  .pc.star:hover { border-color: var(--accent); }
-  .pc-badge { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, var(--accent), var(--accent3)); color: #040810; font-family: 'Inconsolata', monospace; font-size: 9px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; padding: 3px 12px; border-radius: 20px; white-space: nowrap; }
-  .p-tier { font-family: 'Inconsolata', monospace; font-size: 11px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 16px; }
-  .p-price { font-size: 46px; font-weight: 800; letter-spacing: -2px; line-height: 1; margin-bottom: 2px; }
-  .p-price .cents { font-size: 16px; font-weight: 400; color: var(--muted); }
-  .p-cycle { font-family: 'Inconsolata', monospace; font-size: 12px; color: var(--muted); margin-bottom: 22px; }
-  .p-feats { list-style: none; margin-bottom: 24px; }
-  .p-feats li { font-family: 'Inconsolata', monospace; font-size: 13px; color: var(--muted); padding: 7px 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
-  .t1 { color: var(--accent); font-size: 12px; flex-shrink: 0; }
-  .t2 { color: var(--accent2); font-size: 12px; flex-shrink: 0; }
-  .p-btn { width: 100%; padding: 13px; border-radius: 9px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text); transition: all 0.2s; letter-spacing: 0.5px; }
-  .p-btn:hover { border-color: var(--accent3); color: var(--accent3); }
-  .pc.star .p-btn { background: linear-gradient(135deg, var(--accent), var(--accent3)); color: #040810; border: none; }
-  .pc.star .p-btn:hover { opacity: 0.9; transform: translateY(-1px); }
-
-  /* CONTACT */
-  .contact-sec { padding: 80px 0 100px; }
-  .contact-inner { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 56px 44px; text-align: center; position: relative; overflow: hidden; }
-  @media(max-width:580px){ .contact-inner { padding: 34px 18px; } }
-  .contact-inner::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--accent2), var(--accent), transparent); }
-  .contact-glow { position: absolute; width: 300px; height: 300px; background: radial-gradient(circle, rgba(79,255,176,0.06), transparent 70%); top: -80px; right: -40px; pointer-events: none; }
-  .ctag { font-family: 'Inconsolata', monospace; font-size: 11px; letter-spacing: 3px; color: var(--accent2); text-transform: uppercase; margin-bottom: 12px; }
-  .ctitle { font-size: clamp(30px, 5vw, 48px); font-weight: 800; letter-spacing: -1.5px; margin-bottom: 12px; }
-  .csub { font-family: 'Inconsolata', monospace; font-size: 14px; color: var(--muted); margin-bottom: 44px; line-height: 1.7; font-weight: 300; }
-
-  .chooser { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-  .eopt { flex: 1; min-width: 210px; max-width: 290px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px 22px 36px; cursor: pointer; text-decoration: none; color: inherit; transition: all 0.25s; display: block; position: relative; overflow: hidden; }
-  @media(max-width:480px){ .eopt { min-width: 100%; max-width: 100%; } }
-  .eopt::before { content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity 0.25s; border-radius: 16px; }
-  .eopt.c1::before { background: radial-gradient(circle at top left, rgba(79,255,176,0.08), transparent 70%); }
-  .eopt.c2::before { background: radial-gradient(circle at top left, rgba(255,79,139,0.08), transparent 70%); }
-  .eopt:hover { transform: translateY(-5px); }
-  .eopt.c1:hover { border-color: rgba(79,255,176,0.45); box-shadow: 0 12px 40px rgba(79,255,176,0.09); }
-  .eopt.c2:hover { border-color: rgba(255,79,139,0.45); box-shadow: 0 12px 40px rgba(255,79,139,0.09); }
-  .eopt:hover::before { opacity: 1; }
-  .e-icon { font-size: 30px; margin-bottom: 14px; display: block; }
-  .e-label { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
-  .eopt.c1 .e-label { color: var(--accent); }
-  .eopt.c2 .e-label { color: var(--accent2); }
-  .e-desc { font-family: 'Inconsolata', monospace; font-size: 12px; color: var(--muted); line-height: 1.65; font-weight: 300; }
-  .e-arrow { position: absolute; bottom: 18px; right: 18px; font-size: 16px; color: var(--muted); transition: all 0.2s; }
-  .eopt.c1:hover .e-arrow { color: var(--accent); transform: translateX(3px); }
-  .eopt.c2:hover .e-arrow { color: var(--accent2); transform: translateX(3px); }
-
-  /* MODAL */
-  .mbg { display: none; position: fixed; inset: 0; background: rgba(4,8,16,0.88); z-index: 100; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
-  .mbg.on { display: flex; }
-  .mbox { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 44px 34px; max-width: 420px; width: 100%; text-align: center; position: relative; animation: popIn 0.3s cubic-bezier(0.16,1,0.3,1); }
-  @keyframes popIn { from{opacity:0;transform:scale(0.93) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
-  .mbox::before { content:''; position:absolute; top:0;left:0;right:0;height:1px; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
-  .mclose { position: absolute; top: 14px; right: 16px; background: none; border: none; color: var(--muted); font-size: 22px; cursor: pointer; line-height: 1; transition: color 0.2s; }
-  .mclose:hover { color: var(--text); }
-  .mbox h2 { font-size: 32px; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
-  .mbox p { font-family: 'Inconsolata', monospace; font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.7; font-weight: 300; }
-  .mi { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-family: 'Syne', sans-serif; font-size: 14px; padding: 13px 15px; border-radius: 10px; outline: none; margin-bottom: 10px; transition: border-color 0.2s, box-shadow 0.2s; }
-  .mi:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(79,255,176,0.07); }
-  .msub { width: 100%; background: linear-gradient(135deg, var(--accent), var(--accent3)); color: #040810; border: none; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 15px; letter-spacing: 0.5px; padding: 15px; border-radius: 10px; cursor: pointer; transition: all 0.2s; margin-bottom: 14px; }
-  .msub:hover { opacity: 0.9; transform: translateY(-1px); }
-  .mfine { font-family: 'Inconsolata', monospace; font-size: 11px; color: var(--muted); }
-
-  /* TOAST */
-  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--accent); color: #040810; font-family: 'Inconsolata', monospace; font-size: 13px; font-weight: 600; padding: 12px 22px; border-radius: 10px; z-index: 300; white-space: nowrap; transition: transform 0.35s cubic-bezier(0.16,1,0.3,1); }
-  .toast.on { transform: translateX(-50%) translateY(0); }
-
-  /* FOOTER */
-  footer { border-top: 1px solid var(--border); padding: 22px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-  .flogo { font-size: 16px; font-weight: 800; }
-  .flogo .la { color: var(--accent); }
-  .flogo .lb { color: var(--muted); }
-  .fcopy { font-family: 'Inconsolata', monospace; font-size: 11px; color: var(--muted); letter-spacing: 1px; }
+/* Success step */
+.success-step{text-align:center;padding:36px 24px;}
+.s-icon{font-size:52px;margin-bottom:16px;}
+.s-title{font-size:22px;font-weight:800;letter-spacing:-.5px;color:var(--green);margin-bottom:8px;}
+.s-desc{font-size:14px;color:var(--text2);line-height:1.65;}
+.done-btn{margin-top:20px;padding:12px 32px;background:var(--blue);color:#fff;border:none;border-radius:var(--r);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:14px;cursor:pointer;}
 </style>
 </head>
 <body>
 
-<div class="orb o1"></div>
-<div class="orb o2"></div>
-<div class="orb o3"></div>
-
-<div class="container">
-
+<div class="wrap">
   <nav>
-    <div class="logo"><span class="la">Name</span><span class="lb">Forge</span></div>
-    <div class="nav-r">
-      <div class="nav-pill">Beta</div>
+    <div class="logo"><div class="logo-icon">⚡</div><span>NameForge</span></div>
+    <div class="nav-links">
+      <a href="#pricing" class="nav-link">Pricing</a>
       <a href="#contact" class="nav-link">Contact</a>
+      <button class="nav-cta" onclick="openModal()">Get Pro</button>
     </div>
   </nav>
 
   <div class="hero">
-    <div class="eyebrow">AI-Powered Startup Names</div>
-    <h1>
-      <span class="hw1">NAME YOUR</span>
-      <span class="hw2">NEXT UNICORN</span>
-    </h1>
-    <p class="hero-sub">Generate brandable, memorable startup names in seconds. Used by 12,000+ founders worldwide.</p>
+    <div class="hero-badge"><div class="hero-badge-dot"></div><span>AI-Powered · Instant · Brandable</span></div>
+    <h1>Name your<br><em>next unicorn</em></h1>
+    <p>Generate brandable startup names instantly. Trusted by 12,000+ founders worldwide.</p>
   </div>
 
   <div class="stats">
-    <div class="stat"><div class="sn">12K+</div><div class="sl">Founders</div></div>
-    <div class="stat"><div class="sn">340K</div><div class="sl">Generated</div></div>
-    <div class="stat"><div class="sn">94%</div><div class="sl">Satisfied</div></div>
-    <div class="stat"><div class="sn">2.1s</div><div class="sl">Avg Speed</div></div>
+    <div class="stat"><div class="stat-n">12K+</div><div class="stat-l">Founders</div></div>
+    <div class="stat"><div class="stat-n">340K</div><div class="stat-l">Generated</div></div>
+    <div class="stat"><div class="stat-n">94%</div><div class="stat-l">Satisfied</div></div>
+    <div class="stat"><div class="stat-n">2.1s</div><div class="stat-l">Avg Speed</div></div>
   </div>
 
-  <!-- TOOL -->
-  <div class="tool-wrap">
-    <div class="tool-glow"></div>
-    <div class="tool-card" id="toolCard">
-
-      <div class="usage-strip" id="usageBar">
-        <div class="udot"></div>
-        <div class="utxt">Free generations: <strong id="usageLeft">3</strong> / 3 left</div>
-        <div class="utrack"><div class="ufill" id="usageFill" style="width:100%"></div></div>
+  <div class="tool-card">
+    <div class="tool-header">
+      <div class="tool-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      <div class="usage-pill" id="usagePill">
+        <span>Free: <span class="usage-num" id="usageNum">3</span>/3</span>
+        <div class="usage-bar-wrap"><div class="usage-bar-fill" id="usageFill" style="width:100%"></div></div>
       </div>
-
-      <div class="input-row">
-        <div class="ig">
-          <label class="fl">What does your startup do?</label>
-          <input type="text" id="descInput" placeholder="e.g. AI hiring platform for remote teams" />
+    </div>
+    <div class="success-banner" id="successBanner">✓ Pro activated — Unlimited generations unlocked</div>
+    <div class="tool-body">
+      <div class="field-row" style="margin-bottom:0">
+        <div style="flex:1">
+          <label class="field-label">What does your startup do?</label>
+          <input type="text" id="descInput" placeholder="e.g. AI hiring platform for remote teams" autocomplete="off"/>
         </div>
-        <div class="ig narrow">
-          <label class="fl">Industry</label>
-          <select id="industrySelect">
+        <div class="field-sm">
+          <label class="field-label">Industry</label>
+          <select id="industryInput">
             <option value="tech">Tech / SaaS</option>
             <option value="fintech">Fintech</option>
             <option value="health">Healthtech</option>
@@ -276,274 +270,423 @@
           </select>
         </div>
       </div>
-
-      <button class="gen-btn" id="genBtn" onclick="generate()">⚡ GENERATE NAMES</button>
-
-      <div class="results-wrap" id="resultsWrap">
-        <div class="rh">
-          <div class="rlabel">// Results</div>
-          <div class="rcount" id="resCount">4 names</div>
-        </div>
-        <div class="name-grid" id="nameGrid"></div>
-        <div class="lock-wall" id="lockWall">
-          <div class="lock-msg">🔒 2 premium names locked</div>
-          <button class="unlock-btn" onclick="showModal('pro')">UNLOCK ALL →</button>
-        </div>
+      <button class="gen-btn" id="genBtn" onclick="generate()"><span id="genTxt">⚡ Generate Names</span></button>
+    </div>
+    <div class="results" id="results">
+      <div class="results-bar">
+        <span class="results-label">// RESULTS</span>
+        <span class="results-count" id="resCount">4 names</span>
       </div>
-
+      <div class="name-grid" id="nameGrid"></div>
+      <div class="lock-gate" id="lockGate">
+        <p>🔒 2 premium names locked</p>
+        <button class="lock-btn" onclick="openModal()">Unlock all names →</button>
+      </div>
     </div>
   </div>
 
-  <!-- PRICING -->
-  <div class="section">
-    <div class="sec-head">
-      <div class="sec-tag">// Pricing</div>
-      <div class="sec-title">Simple, fair pricing</div>
-    </div>
-    <div class="pgrid">
-
-      <div class="pc">
-        <div class="p-tier">// Free</div>
-        <div class="p-price">$0</div>
-        <div class="p-cycle">forever free</div>
-        <ul class="p-feats">
-          <li><span class="t1">→</span>3 generations/day</li>
-          <li><span class="t1">→</span>4 names per batch</li>
-          <li><span class="t1">→</span>7 industries</li>
-          <li><span class="t1">→</span>Copy to clipboard</li>
+  <div class="section" id="pricing">
+    <div class="sec-eyebrow">// Pricing</div>
+    <div class="sec-title">Simple, transparent pricing</div>
+    <div class="sec-sub">Pay via UPI — GPay, PhonePe, Paytm. Instant unlock.</div>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="plan-label">// Free</div>
+        <div class="plan-price">₹0</div>
+        <div class="plan-cycle">forever free</div>
+        <ul class="plan-feats">
+          <li><span class="tick">✓</span>3 generations/day</li>
+          <li><span class="tick">✓</span>4 names per batch</li>
+          <li><span class="tick">✓</span>7 industries</li>
+          <li><span class="tick">✓</span>Copy to clipboard</li>
         </ul>
-        <button class="p-btn" onclick="document.getElementById('descInput').focus()">Start Free</button>
+        <button class="plan-btn" onclick="document.getElementById('descInput').focus()">Start for free</button>
       </div>
-
-      <div class="pc star">
-        <div class="pc-badge">Most Popular</div>
-        <div class="p-tier">// Pro</div>
-        <div class="p-price">$9<span class="cents">/mo</span></div>
-        <div class="p-cycle">billed monthly</div>
-        <ul class="p-feats">
-          <li><span class="t2">✦</span>Unlimited generations</li>
-          <li><span class="t2">✦</span>12 names per batch</li>
-          <li><span class="t2">✦</span>Domain availability check</li>
-          <li><span class="t2">✦</span>Trademark pre-screen</li>
-          <li><span class="t2">✦</span>Export to CSV</li>
+      <div class="price-card featured">
+        <div class="badge">Most Popular</div>
+        <div class="plan-label">// Pro</div>
+        <div class="plan-price">₹749<span class="unit">/mo</span></div>
+        <div class="plan-cycle">≈ $9 · Pay via UPI</div>
+        <ul class="plan-feats">
+          <li><span class="tick-blue">✦</span>Unlimited generations</li>
+          <li><span class="tick-blue">✦</span>12 names per batch</li>
+          <li><span class="tick-blue">✦</span>Domain availability check</li>
+          <li><span class="tick-blue">✦</span>Trademark pre-screen</li>
+          <li><span class="tick-blue">✦</span>Export to CSV</li>
         </ul>
-        <button class="p-btn" onclick="showModal('pro')">Get Pro →</button>
+        <button class="plan-btn" onclick="openModal('pro')">Get Pro →</button>
+        <div class="upi-badge">📱 GPay · PhonePe · Paytm · UPI</div>
       </div>
-
-      <div class="pc">
-        <div class="p-tier">// Team</div>
-        <div class="p-price">$29<span class="cents">/mo</span></div>
-        <div class="p-cycle">up to 5 seats</div>
-        <ul class="p-feats">
-          <li><span class="t1">→</span>Everything in Pro</li>
-          <li><span class="t1">→</span>Shared name library</li>
-          <li><span class="t1">→</span>Team voting & ratings</li>
-          <li><span class="t1">→</span>Brand identity kit</li>
-          <li><span class="t1">→</span>Priority support</li>
+      <div class="price-card">
+        <div class="plan-label">// Team</div>
+        <div class="plan-price">₹2400<span class="unit">/mo</span></div>
+        <div class="plan-cycle">up to 5 seats · Pay via UPI</div>
+        <ul class="plan-feats">
+          <li><span class="tick">✓</span>Everything in Pro</li>
+          <li><span class="tick">✓</span>Shared name library</li>
+          <li><span class="tick">✓</span>Team voting & ratings</li>
+          <li><span class="tick">✓</span>Brand identity kit</li>
+          <li><span class="tick">✓</span>Priority support</li>
         </ul>
-        <button class="p-btn" onclick="showModal('team')">Get Team →</button>
+        <button class="plan-btn" onclick="openModal('team')">Get Team →</button>
+        <div class="upi-badge">📱 GPay · PhonePe · Paytm · UPI</div>
       </div>
-
     </div>
   </div>
 
-  <!-- CONTACT -->
-  <div class="contact-sec" id="contact">
-    <div class="contact-inner">
-      <div class="contact-glow"></div>
-      <div class="ctag">// Get In Touch</div>
-      <div class="ctitle">Let's work together</div>
-      <p class="csub">Have a project or idea? Choose how you'd like to reach out.</p>
-
-      <div class="chooser">
-
-        <a class="eopt c1"
-           href="mailto:jkking600@gmail.com?subject=Business%20Inquiry%20%E2%80%94%20NameForge&body=Hi%2C%0A%0AI%20found%20NameForge%20and%20I%27m%20interested%20in%20discussing%20a%20business%20opportunity.%0A%0AProject%20details%3A%0A%0A"
-           target="_blank">
-          <span class="e-icon">💼</span>
-          <div class="e-label">I'm a Client</div>
-          <div class="e-desc">Have a business idea or project? Let's discuss how we can build something great together.</div>
-          <span class="e-arrow">→</span>
-        </a>
-
-        <a class="eopt c2"
-           href="mailto:jkking600@gmail.com?subject=Collaboration%20Proposal%20%E2%80%94%20NameForge&body=Hi%2C%0A%0AI%27d%20love%20to%20explore%20a%20collaboration%20opportunity.%0A%0AMy%20idea%20%2F%20proposal%3A%0A%0A"
-           target="_blank">
-          <span class="e-icon">🤝</span>
-          <div class="e-label">Collaborate</div>
-          <div class="e-desc">Want to partner, co-build, or work on something exciting? I'd love to hear your idea.</div>
-          <span class="e-arrow">→</span>
-        </a>
-
-      </div>
+  <div class="contact-box" id="contact">
+    <div class="sec-eyebrow">// Contact</div>
+    <div class="sec-title">Let's build together</div>
+    <p class="sec-sub">Choose how you'd like to reach out.</p>
+    <div class="contact-grid">
+      <a class="contact-card client" href="mailto:jkking600@gmail.com?subject=Business%20Inquiry%20%E2%80%94%20NameForge&body=Hi%2C%0A%0AI%20found%20NameForge%20and%20I%27m%20interested%20in%20a%20business%20opportunity.%0A%0AProject%20details%3A%0A%0A" target="_blank">
+        <span class="cc-icon">💼</span>
+        <div class="cc-title">I'm a Client</div>
+        <div class="cc-desc">Have a project or business idea? Let's discuss building something great.</div>
+        <span class="cc-arrow">→</span>
+      </a>
+      <a class="contact-card collab" href="mailto:jkking600@gmail.com?subject=Collaboration%20Proposal%20%E2%80%94%20NameForge&body=Hi%2C%0A%0AI%27d%20love%20to%20explore%20a%20collaboration.%0A%0AIdea%20%2F%20Proposal%3A%0A%0A" target="_blank">
+        <span class="cc-icon">🤝</span>
+        <div class="cc-title">Collaborate</div>
+        <div class="cc-desc">Want to co-build or partner? I'd love to hear your idea.</div>
+        <span class="cc-arrow">→</span>
+      </a>
     </div>
   </div>
 
   <footer>
-    <div class="flogo"><span class="la">Name</span><span class="lb">Forge</span></div>
-    <div class="fcopy">© 2025 NameForge — Built for founders</div>
+    <span class="footer-logo">⚡ NameForge</span>
+    <span class="footer-copy">© 2025 NameForge · UPI Payments · India</span>
   </footer>
-
 </div>
 
-<!-- UPGRADE MODAL -->
-<div class="mbg" id="modal">
-  <div class="mbox">
-    <button class="mclose" onclick="closeModal()">×</button>
-    <h2>UNLOCK <span id="modalPlan">PRO</span></h2>
-    <p>Join 4,200+ founders using NameForge Pro.<br>7-day free trial, cancel anytime.</p>
-    <input type="email" class="mi" placeholder="your@email.com" id="emailInput" />
-    <button class="msub" onclick="submitModal()">START FREE TRIAL →</button>
-    <div class="mfine">No credit card required. $9/mo after trial.</div>
+<div class="modal-bg" id="modalBg">
+  <div class="modal" id="modalBox">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+
+    <div class="modal-steps">
+      <div class="sdot active" id="d1"></div>
+      <div class="sdot" id="d2"></div>
+      <div class="sdot" id="d3"></div>
+      <div class="sdot" id="d4"></div>
+    </div>
+
+    <div class="step show" id="s1">
+      <div class="step-title">Choose your plan</div>
+      <div class="step-sub">Pay once via UPI every month. Instant unlock after verification.</div>
+      <div class="chips">
+        <div class="chip sel" id="chip-pro" onclick="pickPlan('pro')">
+          <div class="chip-name">Pro</div><div class="chip-price">₹749/mo</div>
+        </div>
+        <div class="chip" id="chip-team" onclick="pickPlan('team')">
+          <div class="chip-name">Team</div><div class="chip-price">₹2400/mo</div>
+        </div>
+      </div>
+      <input type="email" class="mi" id="s1email" placeholder="Your email address" />
+      <button class="next-btn" onclick="toStep(2)">Continue to Payment →</button>
+    </div>
+
+    <div class="step" id="s2">
+      <div class="step-title">Scan & Pay via UPI</div>
+      <div class="step-sub">Use GPay, PhonePe, Paytm or any UPI app to pay <strong id="s2amt">₹749</strong>.</div>
+      <div class="qr-wrap">
+        <div class="qr-frame">
+          <img id="qrImg" src="" alt="UPI QR" />
+        </div>
+        <div class="upi-apps">
+          <div class="upi-app"><span style="font-size:22px">🟢</span><span>GPay</span></div>
+          <div class="upi-app"><span style="font-size:22px">🟣</span><span>PhonePe</span></div>
+          <div class="upi-app"><span style="font-size:22px">🔵</span><span>Paytm</span></div>
+          <div class="upi-app"><span style="font-size:22px">🟠</span><span>BHIM</span></div>
+        </div>
+        <div class="upi-id-row">
+          <span class="upi-id-val" id="upiShow"></span>
+          <button class="copy-upi" onclick="copyUPI()">Copy</button>
+        </div>
+        <div class="amt-note">Send exactly <strong id="amtExact">₹749</strong> · Note the UTR / Ref no. after payment</div>
+      </div>
+      <button class="next-btn" onclick="toStep(3)">I've Paid → Submit Proof</button>
+      <button class="back-link" onclick="toStep(1)">← Back</button>
+    </div>
+
+    <div class="step" id="s3">
+      <div class="step-title">Submit payment proof</div>
+      <div class="step-sub">Enter your UTR/Reference number and upload the payment screenshot.</div>
+
+      <label class="field-label" style="margin-bottom:7px">UTR / Reference Number</label>
+      <input type="text" class="mi" id="utrInput" placeholder="e.g. 426813579264" maxlength="25" oninput="this.value=this.value.replace(/[^0-9A-Za-z]/g,''); checkSubmitReady()"/>
+
+      <label class="field-label" style="margin-bottom:7px">Payment Screenshot</label>
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" accept="image/*" id="shotFile" onchange="handleUpload(this)" />
+        <div class="upload-icon">📸</div>
+        <div class="upload-txt" id="uploadTxt">Tap to upload screenshot</div>
+        <div class="upload-sub">PNG, JPG · Max 5MB</div>
+        <img class="upload-preview" id="shotPreview" />
+      </div>
+
+      <div class="vstat checking" id="vc"><span class="spin">⏳</span><span>Reading UTR from screenshot...</span></div>
+      <div class="vstat success"  id="vs"><span>✅</span><span>UTR verified in screenshot!</span></div>
+      <div class="vstat warn"     id="vw"><span>⚠️</span><span id="warnTxt">UTR not found — we'll verify manually within 1 hr.</span></div>
+      <div class="vstat error"    id="ve"><span>❌</span><span id="errTxt">Could not read screenshot. Proceed anyway for manual review.</span></div>
+
+      <button class="submit-btn" id="submitBtn" onclick="submitPayment()" disabled>✓ Submit & Activate Pro</button>
+      <button class="back-link" onclick="toStep(2)">← Back</button>
+      <div class="secure-note">🔒 Screenshot used only for UTR verification</div>
+    </div>
+
+    <div class="step" id="s4">
+      <div class="success-step">
+        <div class="s-icon">🎉</div>
+        <div class="s-title">Pro Activated!</div>
+        <div class="s-desc" id="s4desc">Payment verified. Pro is now unlocked.</div>
+        <button class="done-btn" onclick="closeModal()">Start Generating →</button>
+      </div>
+    </div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-  let usageCount = 3, isPro = false;
+/* =========================================
+   ⚠️  SETUP — Replace these 5 values
+   =========================================
+   1. UPI_ID      → your UPI ID (e.g. name@paytm)
+   2. UPI_NAME    → your name shown in UPI apps
+   3. EMAILJS_* → from emailjs.com (free)
+      - Create account → Email Services → Add Gmail
+      - Create Template with variables:
+        {{to}}, {{from_name}}, {{from_email}},
+        {{plan}}, {{utr}}, {{amount}}, {{ocr_result}}, {{time}}
+   ========================================= */
+const C = {
+  UPI_ID:   '9749550260-2@axl',  // ← CHANGE THIS
+  UPI_NAME: 'NameForge',
+  EJS_SVC:  'YOUR_EMAILJS_SERVICE_ID',   // ← CHANGE
+  EJS_TPL:  'YOUR_EMAILJS_TEMPLATE_ID',  // ← CHANGE
+  EJS_KEY:  'YOUR_EMAILJS_PUBLIC_KEY',   // ← CHANGE
+  OWNER_MAIL: 'jkking600@gmail.com',
+  plans: {
+    pro:  {name:'Pro',  amt:749},
+    team: {name:'Team', amt:2400}
+  }
+};
 
-  const nameData = {
-    tech:[
-      {name:"Stackr",domain:"stackr.io",desc:"Clean, memorable, signals infrastructure"},
-      {name:"Nexloop",domain:"nexloop.com",desc:"Implies iterative, continuous process"},
-      {name:"Vaultix",domain:"vaultix.io",desc:"Trust + tech blend, enterprise feel"},
-      {name:"Flowbit",domain:"flowbit.dev",desc:"Workflow automation connotation"},
-      {name:"Crestify",domain:"crestify.com",desc:"Growth-forward, SaaS-native sound"},
-      {name:"Gridline",domain:"gridline.io",desc:"Infrastructure, clarity, precision"},
-    ],
-    fintech:[
-      {name:"Vaulta",domain:"vaulta.io",desc:"Security + banking, clean identity"},
-      {name:"Ledgrr",domain:"ledgrr.com",desc:"Modern spelling of a finance staple"},
-      {name:"Clearfund",domain:"clearfund.co",desc:"Transparency in finance"},
-      {name:"Nubonk",domain:"nubonk.io",desc:"Neo-banking, youthful energy"},
-      {name:"Payrail",domain:"payrail.com",desc:"Payments infrastructure, B2B"},
-      {name:"Mintflow",domain:"mintflow.io",desc:"Money movement, fluid"},
-    ],
-    health:[
-      {name:"Healix",domain:"healix.io",desc:"Health + matrix, clinical feel"},
-      {name:"Vitaloop",domain:"vitaloop.com",desc:"Vital signs + continuous loop"},
-      {name:"Medra",domain:"medra.io",desc:"Short, punchy, medical authority"},
-      {name:"Carepath",domain:"carepath.co",desc:"Warm, patient-journey focused"},
-      {name:"Synapse Health",domain:"synphealth.io",desc:"AI + medical intelligence"},
-      {name:"Wellform",domain:"wellform.io",desc:"Wellness + transformation"},
-    ],
-    ai:[
-      {name:"Cognio",domain:"cognio.ai",desc:"Cognition + AI, premium feel"},
-      {name:"Synthetica",domain:"synthetica.ai",desc:"AI-native, futuristic brand"},
-      {name:"Inferix",domain:"inferix.io",desc:"Inference engine connotation"},
-      {name:"Lumina AI",domain:"lumina.ai",desc:"Clarity, intelligence, light"},
-      {name:"Cortexly",domain:"cortexly.com",desc:"Brain + adverb, smart positioning"},
-      {name:"Morphix",domain:"morphix.ai",desc:"Adaptive, shape-shifting AI"},
-    ],
-    ecom:[
-      {name:"Cartly",domain:"cartly.io",desc:"E-com native, friendly, scalable"},
-      {name:"Shelflr",domain:"shelflr.com",desc:"Retail + tech, Flickr-era cool"},
-      {name:"Tradelane",domain:"tradelane.co",desc:"B2B commerce, logistics feel"},
-      {name:"Orderix",domain:"orderix.io",desc:"Operations, order management"},
-      {name:"Stockwave",domain:"stockwave.io",desc:"Inventory management energy"},
-      {name:"Merhant",domain:"merhant.com",desc:"Merchant variant, memorable"},
-    ],
-    edtech:[
-      {name:"Learnloop",domain:"learnloop.io",desc:"Continuous learning cycle"},
-      {name:"Skillvault",domain:"skillvault.co",desc:"Store and grow skills"},
-      {name:"Cursy",domain:"cursy.io",desc:"Courses + friendly, Duolingo energy"},
-      {name:"Gradify",domain:"gradify.com",desc:"Progress + achievement blend"},
-      {name:"Knowledgr",domain:"knowledgr.io",desc:"Tumblr-era, knowledge-first"},
-      {name:"Mentara",domain:"mentara.io",desc:"Mentorship + learning platform"},
-    ],
-    climate:[
-      {name:"Terraly",domain:"terraly.io",desc:"Earth + tech suffix, clean"},
-      {name:"Carbonpath",domain:"carbonpath.co",desc:"Carbon journey, measurable"},
-      {name:"Greenlane",domain:"greenlane.io",desc:"Clean energy corridor feel"},
-      {name:"Ecoframe",domain:"ecoframe.io",desc:"Sustainability infrastructure"},
-      {name:"Verdure",domain:"verdure.co",desc:"Lush, botanical, premium green"},
-      {name:"Fluxcarbon",domain:"fluxcarbon.io",desc:"Carbon trading, dynamic"},
-    ]
+emailjs.init(C.EJS_KEY);
+
+// State
+let free=3, isPro=false, plan='pro', step=1;
+let shotB64='', ocrDone=false, ocrOk=false;
+const SK = 'nf_'+new Date().toDateString();
+free = Math.max(0, 3-(parseInt(sessionStorage.getItem(SK)||'0')));
+updateUsage();
+
+// Restore pro session
+try {
+  const s = JSON.parse(sessionStorage.getItem('nf_pro')||'null');
+  if(s){isPro=true;free=999;document.getElementById('usagePill').style.display='none';document.getElementById('successBanner').className='success-banner show';}
+} catch(e){}
+
+/* ---- NAME DATA ---- */
+const ND = {
+  tech:[{n:'Stackr',d:'stackr.io',v:'Clean, memorable, signals infrastructure'},{n:'Nexloop',d:'nexloop.com',v:'Iterative, continuous process'},{n:'Vaultix',d:'vaultix.io',v:'Trust + tech blend, enterprise feel'},{n:'Flowbit',d:'flowbit.dev',v:'Workflow automation connotation'},{n:'Crestify',d:'crestify.com',v:'Growth-forward, SaaS-native'},{n:'Gridline',d:'gridline.io',v:'Infrastructure, clarity, precision'}],
+  fintech:[{n:'Vaulta',d:'vaulta.io',v:'Security + banking'},{n:'Ledgrr',d:'ledgrr.com',v:'Modern finance branding'},{n:'Clearfund',d:'clearfund.co',v:'Transparency in finance'},{n:'Nubonk',d:'nubonk.io',v:'Neo-banking, youthful'},{n:'Payrail',d:'payrail.com',v:'Payments infrastructure, B2B'},{n:'Mintflow',d:'mintflow.io',v:'Money movement, fluid'}],
+  health:[{n:'Healix',d:'healix.io',v:'Health + matrix, clinical feel'},{n:'Vitaloop',d:'vitaloop.com',v:'Vital signs + continuous loop'},{n:'Medra',d:'medra.io',v:'Short, punchy, medical authority'},{n:'Carepath',d:'carepath.co',v:'Warm, patient-journey focused'},{n:'Synapse',d:'synphealth.io',v:'AI + medical intelligence'},{n:'Wellform',d:'wellform.io',v:'Wellness + transformation'}],
+  ai:[{n:'Cognio',d:'cognio.ai',v:'Cognition + AI, premium feel'},{n:'Synthetica',d:'synthetica.ai',v:'AI-native, futuristic'},{n:'Inferix',d:'inferix.io',v:'Inference engine connotation'},{n:'Lumina',d:'lumina.ai',v:'Clarity, intelligence, light'},{n:'Cortexly',d:'cortexly.com',v:'Brain + adverb, smart'},{n:'Morphix',d:'morphix.ai',v:'Adaptive, shape-shifting AI'}],
+  ecom:[{n:'Cartly',d:'cartly.io',v:'E-com native, friendly'},{n:'Shelflr',d:'shelflr.com',v:'Retail + tech'},{n:'Tradelane',d:'tradelane.co',v:'B2B commerce, logistics'},{n:'Orderix',d:'orderix.io',v:'Order management'},{n:'Stockwave',d:'stockwave.io',v:'Inventory management'},{n:'Merhant',d:'merhant.com',v:'Merchant variant'}],
+  edtech:[{n:'Learnloop',d:'learnloop.io',v:'Continuous learning cycle'},{n:'Skillvault',d:'skillvault.co',v:'Store and grow skills'},{n:'Cursy',d:'cursy.io',v:'Courses + friendly'},{n:'Gradify',d:'gradify.com',v:'Progress + achievement'},{n:'Knowledgr',d:'knowledgr.io',v:'Knowledge-first'},{n:'Mentara',d:'mentara.io',v:'Mentorship + learning'}],
+  climate:[{n:'Terraly',d:'terraly.io',v:'Earth + tech suffix'},{n:'Carbonpath',d:'carbonpath.co',v:'Carbon journey, measurable'},{n:'Greenlane',d:'greenlane.io',v:'Clean energy corridor'},{n:'Ecoframe',d:'ecoframe.io',v:'Sustainability infrastructure'},{n:'Verdure',d:'verdure.co',v:'Botanical, premium green'},{n:'Fluxcarbon',d:'fluxcarbon.io',v:'Carbon trading, dynamic'}]
+};
+
+/* ---- TOOL ---- */
+function generate(){
+  const desc=document.getElementById('descInput').value.trim();
+  if(!desc){const i=document.getElementById('descInput');i.style.borderColor='var(--red)';i.focus();setTimeout(()=>i.style.borderColor='',1000);return;}
+  if(free<=0&&!isPro){openModal();return;}
+  document.getElementById('genTxt').textContent='↻ Generating...';
+  document.getElementById('genBtn').classList.add('loading');
+  setTimeout(()=>{
+    document.getElementById('genTxt').textContent='⚡ Generate Names';
+    document.getElementById('genBtn').classList.remove('loading');
+    renderResults();
+    if(!isPro){free=Math.max(0,free-1);sessionStorage.setItem(SK,3-free);updateUsage();}
+  },1200);
+}
+
+function renderResults(){
+  const ind=document.getElementById('industryInput').value;
+  const list=ND[ind]||ND.tech, limit=isPro?6:4;
+  const g=document.getElementById('nameGrid');
+  g.innerHTML='';
+  list.forEach((it,i)=>{
+    const locked=!isPro&&i>=limit;
+    const c=document.createElement('div');
+    c.className='name-card'+(locked?' locked':'');
+    c.innerHTML=`<button class="nc-copy" onclick="copyName('${it.n}')">Copy</button><div class="nc-name">${it.n}</div><div class="nc-domain">${it.d}</div><div class="nc-desc">${it.v}</div>`;
+    g.appendChild(c);
+  });
+  document.getElementById('lockGate').className=!isPro?'lock-gate show':'lock-gate';
+  document.getElementById('resCount').textContent=`${limit} names`;
+  document.getElementById('results').className='results show';
+}
+
+function updateUsage(){
+  document.getElementById('usageNum').textContent=free;
+  document.getElementById('usageFill').style.width=(free/3*100)+'%';
+  if(free===0)document.getElementById('usageFill').style.background='var(--red)';
+}
+
+function copyName(n){navigator.clipboard.writeText(n).catch(()=>{});showToast('✓ "'+n+'" copied');}
+
+/* ---- MODAL ---- */
+function openModal(p){
+  pickPlan(p||'pro');
+  toStep(1,true);
+  document.getElementById('modalBg').className='modal-bg show';
+}
+function closeModal(){document.getElementById('modalBg').className='modal-bg';}
+document.getElementById('modalBg').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+function pickPlan(p){
+  plan=p;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('chip-'+p).classList.add('sel');
+  const amt=C.plans[p].amt;
+  document.getElementById('s2amt').textContent='₹'+amt;
+  document.getElementById('amtExact').textContent='₹'+amt;
+  document.getElementById('upiShow').textContent=C.UPI_ID;
+  // Auto-generate QR from UPI deep link
+  const upiStr=`upi://pay?pa=${encodeURIComponent(C.UPI_ID)}&pn=${encodeURIComponent(C.UPI_NAME)}&am=${amt}&cu=INR&tn=${encodeURIComponent('NameForge '+C.plans[p].name)}`;
+  document.getElementById('qrImg').src=`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upiStr)}`;
+}
+
+function toStep(n, init){
+  if(n===2&&!init){
+    const em=document.getElementById('s1email').value.trim();
+    if(!em||!em.includes('@')){document.getElementById('s1email').style.borderColor='var(--red)';showToast('⚠ Enter your email');setTimeout(()=>document.getElementById('s1email').style.borderColor='',1000);return;}
+  }
+  step=n;
+  for(let i=1;i<=4;i++){
+    document.getElementById('s'+i).className='step'+(i===n?' show':'');
+    const d=document.getElementById('d'+i);
+    d.className='sdot'+(i<n?' done':i===n?' active':'');
+  }
+  if(n===3)resetUpload();
+  document.getElementById('modalBox').scrollTop=0;
+}
+
+function copyUPI(){navigator.clipboard.writeText(C.UPI_ID).catch(()=>{});showToast('✓ UPI ID copied');}
+
+/* ---- UPLOAD + OCR ---- */
+function resetUpload(){
+  shotB64='';ocrDone=false;ocrOk=false;
+  document.getElementById('uploadZone').classList.remove('has-file');
+  document.getElementById('uploadTxt').textContent='Tap to upload screenshot';
+  document.getElementById('shotPreview').style.display='none';
+  document.getElementById('shotFile').value='';
+  ['vc','vs','vw','ve'].forEach(id=>document.getElementById(id).className='vstat '+id.slice(1));
+  document.getElementById('submitBtn').disabled=true;
+}
+
+function handleUpload(inp){
+  const f=inp.files[0];
+  if(!f)return;
+  if(f.size>5*1024*1024){showToast('❌ File too large (max 5MB)');return;}
+  const rd=new FileReader();
+  rd.onload=e=>{
+    shotB64=e.target.result;
+    const prev=document.getElementById('shotPreview');
+    prev.src=shotB64; prev.style.display='block';
+    document.getElementById('uploadZone').classList.add('has-file');
+    document.getElementById('uploadTxt').textContent='✓ '+f.name;
+    runOCR();
   };
+  rd.readAsDataURL(f);
+}
 
-  function generate() {
-    const desc = document.getElementById('descInput').value.trim();
-    const industry = document.getElementById('industrySelect').value;
-    if (!desc) {
-      const inp = document.getElementById('descInput');
-      inp.style.borderColor = '#ff4f8b';
-      inp.focus();
-      setTimeout(() => inp.style.borderColor = '', 1200);
-      return;
-    }
-    if (usageCount <= 0 && !isPro) { showModal('pro'); return; }
-    const btn = document.getElementById('genBtn');
-    btn.textContent = '⟳ GENERATING...';
-    btn.classList.add('loading');
-    setTimeout(() => {
-      btn.textContent = '⚡ GENERATE NAMES';
-      btn.classList.remove('loading');
-      showResults(industry);
-      if (!isPro) { usageCount--; updateUsage(); }
-    }, 1400);
-  }
+async function runOCR(){
+  const utr=document.getElementById('utrInput').value.trim();
+  if(!utr){showVstat('vw','Enter UTR number first, then upload screenshot.');checkSubmitReady();return;}
+  showVstat('vc',null);
+  document.getElementById('submitBtn').disabled=true;
+  try{
+    const res=await Tesseract.recognize(shotB64,'eng',{logger:()=>{}});
+    const txt=res.data.text.replace(/\s+/g,'').toUpperCase();
+    const u=utr.replace(/\s+/g,'').toUpperCase();
+    ocrDone=true;
+    if(txt.includes(u)){ocrOk=true;showVstat('vs',null);}
+    else if(u.length>=8&&txt.includes(u.slice(0,8))){ocrOk=true;showVstat('vw','Partial match found — proceeding.');}
+    else{ocrOk=false;document.getElementById('warnTxt').textContent=`UTR "${utr}" not found in screenshot. You can still submit — we'll verify manually within 1 hour.`;showVstat('vw',null);}
+  }catch(e){document.getElementById('errTxt').textContent='Could not read screenshot. Proceed anyway — we\'ll verify manually.';showVstat('ve',null);}
+  checkSubmitReady();
+}
 
-  function showResults(industry) {
-    const names = nameData[industry] || nameData.tech;
-    const grid = document.getElementById('nameGrid');
-    grid.innerHTML = '';
-    const limit = isPro ? 6 : 4;
-    names.forEach((n, i) => {
-      const locked = !isPro && i >= limit;
-      const card = document.createElement('div');
-      card.className = 'nc' + (locked ? ' locked' : '');
-      card.innerHTML = `<button class="copy-btn" onclick="copyIt('${n.name}')">COPY</button><div class="nm">${n.name}</div><div class="nd">→ ${n.domain}</div><div class="nv">${n.desc}</div>`;
-      grid.appendChild(card);
+function showVstat(id,msg){
+  ['vc','vs','vw','ve'].forEach(x=>{const el=document.getElementById(x);el.className='vstat '+(x===id?x.slice(1)+' show':x.slice(1));});
+  if(msg&&id==='vw')document.getElementById('warnTxt').textContent=msg;
+}
+
+function checkSubmitReady(){
+  const utr=document.getElementById('utrInput').value.trim();
+  document.getElementById('submitBtn').disabled=!(utr.length>=6&&shotB64);
+}
+
+/* ---- SUBMIT ---- */
+async function submitPayment(){
+  const utr=document.getElementById('utrInput').value.trim();
+  const email=document.getElementById('s1email').value.trim();
+  const p=C.plans[plan];
+  if(!utr||utr.length<6){showToast('❌ Enter valid UTR');return;}
+  if(!shotB64){showToast('❌ Upload screenshot');return;}
+  const btn=document.getElementById('submitBtn');
+  btn.disabled=true; btn.textContent='⏳ Submitting...';
+  const timeStr=new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'});
+  try{
+    await emailjs.send(C.EJS_SVC, C.EJS_TPL,{
+      to: C.OWNER_MAIL,
+      from_name: 'NameForge Payment System',
+      from_email: email,
+      plan: p.name+' — ₹'+p.amt+'/month',
+      utr: utr,
+      amount: '₹'+p.amt,
+      ocr_result: ocrOk?'✅ UTR VERIFIED':'⚠ Needs manual check',
+      time: timeStr,
+      reply_to: email
     });
-    document.getElementById('lockWall').className = !isPro ? 'lock-wall on' : 'lock-wall';
-    document.getElementById('resCount').textContent = `${limit} names`;
-    document.getElementById('resultsWrap').className = 'results-wrap on';
+    activatePro(email,p,utr,timeStr,'Email sent ✓');
+  }catch(err){
+    // EmailJS failed — fallback to mailto
+    const sub=encodeURIComponent(`[NameForge] ${p.name} Payment — UTR: ${utr}`);
+    const body=encodeURIComponent(`New UPI Payment!\n\nBuyer: ${email}\nPlan: ${p.name}\nAmount: ₹${p.amt}\nUTR: ${utr}\nOCR: ${ocrOk?'Verified':'Manual check needed'}\nTime: ${timeStr}`);
+    window.open(`mailto:${C.OWNER_MAIL}?subject=${sub}&body=${body}`);
+    activatePro(email,p,utr,timeStr,'Email draft opened');
   }
+  btn.disabled=false; btn.textContent='✓ Submit & Activate Pro';
+}
 
-  function updateUsage() {
-    const l = Math.max(0, usageCount);
-    document.getElementById('usageLeft').textContent = l;
-    document.getElementById('usageFill').style.width = (l / 3 * 100) + '%';
-    if (l === 0) document.getElementById('usageFill').style.background = 'var(--accent2)';
-  }
+function activatePro(email,p,utr,time,note){
+  isPro=true; free=999;
+  sessionStorage.setItem('nf_pro',JSON.stringify({email,plan:p.name,utr,ts:Date.now()}));
+  document.getElementById('usagePill').style.display='none';
+  document.getElementById('successBanner').className='success-banner show';
+  document.getElementById('s4desc').innerHTML=
+    `Payment received for <strong>${email}</strong><br>
+     Plan: <strong>${p.name}</strong> · Amount: <strong>₹${p.amt}</strong><br>
+     UTR: <strong>${utr}</strong><br><br>
+     🔓 Pro is now active in this session.<br>
+     <span style="color:var(--text3);font-size:12px">${note} · ${time}</span>`;
+  toStep(4);
+  if(document.getElementById('results').classList.contains('show'))renderResults();
+}
 
-  function copyIt(name) {
-    navigator.clipboard.writeText(name).catch(() => {});
-    showToast(`"${name}" copied!`);
-  }
-
-  function showModal(plan) {
-    document.getElementById('modalPlan').textContent = plan.toUpperCase();
-    document.getElementById('modal').className = 'mbg on';
-  }
-
-  function closeModal() { document.getElementById('modal').className = 'mbg'; }
-
-  function submitModal() {
-    const email = document.getElementById('emailInput').value;
-    if (!email || !email.includes('@')) {
-      const inp = document.getElementById('emailInput');
-      inp.style.borderColor = '#ff4f8b';
-      setTimeout(() => inp.style.borderColor = '', 1200);
-      return;
-    }
-    closeModal();
-    isPro = true; usageCount = 999;
-    document.getElementById('usageBar').style.display = 'none';
-    showToast('🎉 Pro unlocked! Unlimited generations.');
-    if (document.getElementById('resultsWrap').classList.contains('on'))
-      showResults(document.getElementById('industrySelect').value);
-  }
-
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg; t.className = 'toast on';
-    setTimeout(() => t.className = 'toast', 3000);
-  }
-
-  document.getElementById('descInput').addEventListener('keydown', e => { if (e.key==='Enter') generate(); });
-  document.getElementById('modal').addEventListener('click', function(e) { if (e.target===this) closeModal(); });
+/* ---- UTILS ---- */
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast show';
+  setTimeout(()=>t.className='toast',3000);
+}
+document.getElementById('descInput').addEventListener('keydown',e=>{if(e.key==='Enter')generate();});
 </script>
 </body>
 </html>
