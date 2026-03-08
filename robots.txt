@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-
+Sitemap: https://palagencyofficial-sketch.github.io/nameforge/sitemap.xml
